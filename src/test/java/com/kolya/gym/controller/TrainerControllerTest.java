@@ -39,7 +39,7 @@ public class TrainerControllerTest {
     public void addTrainingTest() throws Exception {
         RequestData requestData = new RequestData();
         Mockito.doNothing().when(trainerWorkloadService).validateRequestData(requestData);
-        mockMvc.perform(post("/")
+        mockMvc.perform(post("/trainer-workload")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestData)))
                 .andExpect(status().isOk());
@@ -50,7 +50,7 @@ public class TrainerControllerTest {
     public void addTrainingBadRequestTest() throws Exception {
         RequestData requestData = new RequestData();
         Mockito.doThrow(new IllegalArgumentException("Invalid")).when(trainerWorkloadService).validateRequestData(requestData);
-        mockMvc.perform(post("/")
+        mockMvc.perform(post("/trainer-workload")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestData)))
                 .andExpect(status().isBadRequest());
@@ -60,7 +60,7 @@ public class TrainerControllerTest {
     public void deleteTrainingTest() throws Exception {
         RequestData requestData = new RequestData();
         Mockito.doNothing().when(trainerWorkloadService).validateRequestData(requestData);
-        mockMvc.perform(delete("/")
+        mockMvc.perform(delete("/trainer-workload")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestData)))
                 .andExpect(status().isOk());
@@ -71,7 +71,7 @@ public class TrainerControllerTest {
     public void deleteTrainingBadRequestTest() throws Exception {
         RequestData requestData = new RequestData();
         Mockito.doThrow(new IllegalArgumentException("Invalid")).when(trainerWorkloadService).validateRequestData(requestData);
-        mockMvc.perform(delete("/")
+        mockMvc.perform(delete("/trainer-workload")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestData)))
                 .andExpect(status().isBadRequest());
@@ -82,7 +82,7 @@ public class TrainerControllerTest {
         String username = "testUser";
         TrainerWorkload trainerWorkload = new TrainerWorkload(); // Вставьте корректные данные
         Mockito.when(trainerWorkloadService.getByUsername(Mockito.any(), Mockito.eq(username))).thenReturn(trainerWorkload);
-        mockMvc.perform(get("/" + username)
+        mockMvc.perform(get("/trainer-workload/" + username)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         Mockito.verify(trainerWorkloadService).getByUsername(Mockito.any(), Mockito.eq(username));

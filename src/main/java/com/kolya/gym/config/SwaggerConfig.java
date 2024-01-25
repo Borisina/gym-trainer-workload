@@ -23,7 +23,7 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
-                .securityContexts(Arrays.asList(bearerSecurityContextTrainees(), bearerSecurityContextTrainers()))
+                .securityContexts(Arrays.asList(bearerSecurityContext()))
                 .securitySchemes(Arrays.asList(bearerAuthScheme()));
     }
 
@@ -37,17 +37,10 @@ public class SwaggerConfig {
     }
 
 
-    private SecurityContext bearerSecurityContextTrainees() {
+    private SecurityContext bearerSecurityContext() {
         return SecurityContext.builder()
                 .securityReferences(Arrays.asList(bearerAuthReference()))
-                .forPaths(PathSelectors.any())
-                .build();
-    }
-
-    private SecurityContext bearerSecurityContextTrainers() {
-        return SecurityContext.builder()
-                .securityReferences(Arrays.asList(bearerAuthReference()))
-                .forPaths(PathSelectors.any())
+                .forPaths(PathSelectors.any())  // for endpoints using JWT
                 .build();
     }
 

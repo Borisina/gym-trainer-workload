@@ -41,10 +41,12 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    public void validateToken(String token) throws SignatureException, InvalidTokenException {
-        String audience = extractAudience(token);
-        if (audience!=null && !audience.equals("service") && isTokenExpired(token)) {
-            throw new InvalidTokenException("Token is expired");
+    public boolean isTokenValid(String token) {
+        try{
+            String audience = extractAudience(token);
+            return (audience!=null && audience.equals("service") && !isTokenExpired(token));
+        }catch (SignatureException e){
+            return false;
         }
     }
 }

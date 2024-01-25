@@ -19,6 +19,7 @@ import java.util.UUID;
 
 
 @Api(value = "API for trainer's workload", tags = "TrainerWorkload")
+@RequestMapping("/trainer-workload")
 @RestController
 public class TrainerController {
 
@@ -36,7 +37,7 @@ public class TrainerController {
     @PostMapping
     public ResponseEntity<?> addTraining(@RequestBody RequestData requestData){
         UUID transactionId = UUID.randomUUID();
-        logger.info("Transaction ID: {}, POST / was called with body {}", transactionId, requestData);
+        logger.info("Transaction ID: {}, POST /trainer-workload was called with body {}", transactionId, requestData);
         try{
             trainerWorkloadService.validateRequestData(requestData);
         }catch (IllegalArgumentException e){
@@ -57,7 +58,7 @@ public class TrainerController {
     @DeleteMapping
     public ResponseEntity<?> deleteTraining(@RequestBody RequestData requestData){
         UUID transactionId = UUID.randomUUID();
-        logger.info("Transaction ID: {}, DELETE /trainers was called with body {}", transactionId, requestData);
+        logger.info("Transaction ID: {}, DELETE /trainer-workload was called with body {}", transactionId, requestData);
         try{
             trainerWorkloadService.validateRequestData(requestData);
         }catch (IllegalArgumentException e){
@@ -77,7 +78,7 @@ public class TrainerController {
     @GetMapping("/{username}")
     public ResponseEntity<?> getTrainerWorkload(@PathVariable("username") String username){
         UUID transactionId = UUID.randomUUID();
-        logger.info("Transaction ID: {}, GET /{} was called", transactionId, username);
+        logger.info("Transaction ID: {}, GET /trainer-workload/{} was called", transactionId, username);
         TrainerWorkload trainerWorkload = trainerWorkloadService.getByUsername(transactionId, username);
         logger.info("Transaction ID: {}, 200 OK, Trainer Workload was returned: {} ", transactionId,  trainerWorkload);
         return ResponseEntity.status(HttpStatus.OK).body(trainerWorkload);
