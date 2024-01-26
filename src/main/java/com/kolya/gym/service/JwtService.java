@@ -21,6 +21,9 @@ public class JwtService {
     @Value("${secret-key}")
     private String SECRET_KEY;
 
+    @Value("${audience-type}")
+    private String AUDIENCE_TYPE;
+
     public Date extractExpiration(String token) throws SignatureException, ExpiredJwtException {
         return extractClaim(token, Claims::getExpiration);
     }
@@ -44,7 +47,7 @@ public class JwtService {
     public boolean isTokenValid(String token) {
         try{
             String audience = extractAudience(token);
-            return (audience!=null && audience.equals("service") && !isTokenExpired(token));
+            return (audience!=null && audience.equals(AUDIENCE_TYPE) && !isTokenExpired(token));
         }catch (SignatureException e){
             return false;
         }
