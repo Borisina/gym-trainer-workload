@@ -19,10 +19,10 @@ public class JmsConfig {
     private String MQ_USERNAME;
 
     @Value("${mq.password}")
-    private String PASSWORD;
+    private String MQ_PASSWORD;
 
     @Value("${mq.url}")
-    private String URL;
+    private String MQ_URL;
 
     @Value("${mq.converter.type-id-property-name}")
     private String TYPE_ID_PROPERTY_NAME;
@@ -32,7 +32,7 @@ public class JmsConfig {
 
     @Bean
     public ActiveMQConnectionFactory connectionFactory(){
-        return new ActiveMQConnectionFactory(MQ_USERNAME, PASSWORD, URL);
+        return new ActiveMQConnectionFactory(MQ_USERNAME, MQ_PASSWORD, MQ_URL);
     }
 
     @Bean
