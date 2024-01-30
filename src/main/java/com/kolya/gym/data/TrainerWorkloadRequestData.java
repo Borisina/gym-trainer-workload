@@ -1,18 +1,39 @@
 package com.kolya.gym.data;
 
 
-import io.swagger.models.auth.In;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 import java.util.Objects;
 
-public class RequestData{
+public class TrainerWorkloadRequestData {
     private String username;
     private String firstName;
     private String lastName;
     private Boolean isActive;
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date trainingDate;
     private Integer trainingDuration;
+
+    public TrainerWorkloadRequestData() {
+    }
+
+    @JsonCreator
+    public TrainerWorkloadRequestData(@JsonProperty("username") String username,
+                                      @JsonProperty("firstName") String firstName,
+                                      @JsonProperty("lastName") String lastName,
+                                      @JsonProperty("isActive") Boolean isActive,
+                                      @JsonProperty("trainingDate") Date trainingDate,
+                                      @JsonProperty("trainingDuration")Integer trainingDuration) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.isActive = isActive;
+        this.trainingDate = trainingDate;
+        this.trainingDuration = trainingDuration;
+    }
 
     public String getUsername() {
         return username;
@@ -66,7 +87,7 @@ public class RequestData{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RequestData that = (RequestData) o;
+        TrainerWorkloadRequestData that = (TrainerWorkloadRequestData) o;
         return Objects.equals(username, that.username) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(isActive, that.isActive) && Objects.equals(trainingDate, that.trainingDate) && Objects.equals(trainingDuration, that.trainingDuration);
     }
 
@@ -77,7 +98,7 @@ public class RequestData{
 
     @Override
     public String toString() {
-        return "RequestData{" +
+        return "TrainerWorkloadRequestData{" +
                 "username='" + username + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +

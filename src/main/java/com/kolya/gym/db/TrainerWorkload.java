@@ -13,4 +13,11 @@ public class TrainerWorkload {
     public void setWorkload(Map<Integer, Map<String, Integer>> list) {
         this.workLoad = list;
     }
+
+    @Override
+    public String toString() {
+        return "TrainerWorkload{" +
+                "workLoad=" + workLoad +
+                '}';
+    }
 }
