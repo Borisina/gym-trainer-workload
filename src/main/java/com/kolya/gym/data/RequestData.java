@@ -74,4 +74,16 @@ public class RequestData{
     public int hashCode() {
         return Objects.hash(username, firstName, lastName, isActive, trainingDate, trainingDuration);
     }
+
+    @Override
+    public String toString() {
+        return "RequestData{" +
+                "username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", isActive=" + isActive +
+                ", trainingDate=" + trainingDate +
+                ", trainingDuration=" + trainingDuration +
+                '}';
+    }
 }
