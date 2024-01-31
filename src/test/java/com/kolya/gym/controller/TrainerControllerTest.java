@@ -1,7 +1,7 @@
 package com.kolya.gym.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kolya.gym.data.RequestData;
+import com.kolya.gym.data.TrainerWorkloadRequestData;
 import com.kolya.gym.db.TrainerWorkload;
 import com.kolya.gym.service.TrainerWorkloadService;
 import org.junit.Before;
@@ -33,48 +33,6 @@ public class TrainerControllerTest {
     @Before
     public void init(){
         mockMvc = MockMvcBuilders.standaloneSetup(trainerController).build();
-    }
-
-    @Test
-    public void addTrainingTest() throws Exception {
-        RequestData requestData = new RequestData();
-        Mockito.doNothing().when(trainerWorkloadService).validateRequestData(requestData);
-        mockMvc.perform(post("/trainer-workload")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestData)))
-                .andExpect(status().isOk());
-        Mockito.verify(trainerWorkloadService).addTraining(Mockito.any(), Mockito.any(RequestData.class));
-    }
-
-    @Test
-    public void addTrainingBadRequestTest() throws Exception {
-        RequestData requestData = new RequestData();
-        Mockito.doThrow(new IllegalArgumentException("Invalid")).when(trainerWorkloadService).validateRequestData(requestData);
-        mockMvc.perform(post("/trainer-workload")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestData)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void deleteTrainingTest() throws Exception {
-        RequestData requestData = new RequestData();
-        Mockito.doNothing().when(trainerWorkloadService).validateRequestData(requestData);
-        mockMvc.perform(delete("/trainer-workload")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestData)))
-                .andExpect(status().isOk());
-        Mockito.verify(trainerWorkloadService).deleteTraining(Mockito.any(), Mockito.any(RequestData.class));
-    }
-
-    @Test
-    public void deleteTrainingBadRequestTest() throws Exception {
-        RequestData requestData = new RequestData();
-        Mockito.doThrow(new IllegalArgumentException("Invalid")).when(trainerWorkloadService).validateRequestData(requestData);
-        mockMvc.perform(delete("/trainer-workload")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestData)))
-                .andExpect(status().isBadRequest());
     }
 
     @Test

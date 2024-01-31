@@ -1,11 +1,9 @@
 package com.kolya.gym.service;
 
-import com.kolya.gym.data.RequestData;
-import com.kolya.gym.db.InMemoryStorage;
+import com.kolya.gym.data.TrainerWorkloadRequestData;
 import com.kolya.gym.repo.TrainerWorkloadRepo;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,11 +23,11 @@ public class TrainerWorkloadServiceTest {
     @Mock
     private TrainerWorkloadRepo trainerWorkloadRepo;
 
-    private RequestData requestData;
+    private TrainerWorkloadRequestData requestData;
 
     @Before
     public void setUp() {
-        requestData = new RequestData();
+        requestData = new TrainerWorkloadRequestData();
         requestData.setFirstName("firstName");
         requestData.setLastName("lastName");
         requestData.setUsername("username");
