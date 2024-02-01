@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessagePostProcessor;
 import org.springframework.stereotype.Service;
 
 import javax.jms.JMSException;
@@ -39,10 +38,8 @@ public class Reciever {
         try{
             trainerWorkloadService.validateRequestData(trainerWorkloadData);
         }catch (IllegalArgumentException e){
-            jmsTemplate.convertAndSend(QUEUE_NAME_DLQ, trainerWorkloadData, message ->  {
-                message.setStringProperty("dlqDeliveryFailureCause",e.getMessage());
-                return message;
-            });
+            jmsTemplate.convertAndSend(QUEUE_NAME_DLQ, trainerWorkloadData,
+                    message ->  setPropertyForMessage(message,"dlqDeliveryFailureCause",e.getMessage()));
             logger.info("Transaction ID: {}, TrainerWorkloadRequestData is invalid. Message redirected to dlq.", transactionId);
             return ;
         }
@@ -57,10 +54,8 @@ public class Reciever {
         try{
             trainerWorkloadService.validateRequestData(trainerWorkloadData);
         }catch (IllegalArgumentException e){
-            jmsTemplate.convertAndSend(QUEUE_NAME_DLQ, trainerWorkloadData, message ->  {
-                message.setStringProperty("dlqDeliveryFailureCause",e.getMessage());
-                return message;
-            });
+            jmsTemplate.convertAndSend(QUEUE_NAME_DLQ, trainerWorkloadData,
+                    message ->  setPropertyForMessage(message,"dlqDeliveryFailureCause",e.getMessage()));
             logger.info("Transaction ID: {}, TrainerWorkloadRequestData is invalid. Message redirected to dlq.", transactionId);
             return ;
         }
@@ -68,6 +63,10 @@ public class Reciever {
         logger.info("Transaction ID: {}, Training deleted after recieving.", transactionId);
     }
 
+    private Message setPropertyForMessage(Message message, String propertyName, String value) throws JMSException {
+        message.setStringProperty(propertyName,value);
+        return message;
+    }
 
 }
 
