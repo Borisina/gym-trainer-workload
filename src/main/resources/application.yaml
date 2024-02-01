@@ -19,8 +19,7 @@ mq:
     concurrency: '1-1'
   queue:
     name:
-      add: 'trainer-workload-add'
-      delete: 'trainer-workload-delete'
+      workload: 'trainer-workload-queue'
       dlq: 'ActiveMQ.DLQ'
 eureka:
   client:
@@ -54,8 +53,7 @@ mq:
     concurrency: '1-1'
   queue:
     name:
-      add: 'add-training-queue'
-      delete: 'delete-training-queue'
+      workload: 'trainer-workload-queue'
       dlq: 'ActiveMQ.DLQ'
 eureka:
   client:
@@ -89,8 +87,7 @@ mq:
     concurrency: '1-1'
   queue:
     name:
-      add: 'add-training-queue'
-      delete: 'delete-training-queue'
+      workload: 'trainer-workload-queue'
       dlq: 'ActiveMQ.DLQ'
 eureka:
   client:

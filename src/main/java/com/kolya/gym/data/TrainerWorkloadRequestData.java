@@ -17,6 +17,8 @@ public class TrainerWorkloadRequestData {
     private Date trainingDate;
     private Integer trainingDuration;
 
+    private ActionType actionType;
+
     public TrainerWorkloadRequestData() {
     }
 
@@ -26,13 +28,15 @@ public class TrainerWorkloadRequestData {
                                       @JsonProperty("lastName") String lastName,
                                       @JsonProperty("isActive") Boolean isActive,
                                       @JsonProperty("trainingDate") Date trainingDate,
-                                      @JsonProperty("trainingDuration")Integer trainingDuration) {
+                                      @JsonProperty("trainingDuration") Integer trainingDuration,
+                                      @JsonProperty("actionType") ActionType actionType) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.isActive = isActive;
         this.trainingDate = trainingDate;
         this.trainingDuration = trainingDuration;
+        this.actionType = actionType;
     }
 
     public String getUsername() {
@@ -83,17 +87,12 @@ public class TrainerWorkloadRequestData {
         this.trainingDuration = trainingDuration;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TrainerWorkloadRequestData that = (TrainerWorkloadRequestData) o;
-        return Objects.equals(username, that.username) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(isActive, that.isActive) && Objects.equals(trainingDate, that.trainingDate) && Objects.equals(trainingDuration, that.trainingDuration);
+    public ActionType getActionType() {
+        return actionType;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(username, firstName, lastName, isActive, trainingDate, trainingDuration);
+    public void setActionType(ActionType actionType) {
+        this.actionType = actionType;
     }
 
     @Override
@@ -105,6 +104,7 @@ public class TrainerWorkloadRequestData {
                 ", isActive=" + isActive +
                 ", trainingDate=" + trainingDate +
                 ", trainingDuration=" + trainingDuration +
+                ", actionType=" + actionType +
                 '}';
     }
 }

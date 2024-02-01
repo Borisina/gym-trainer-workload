@@ -1,5 +1,6 @@
 package com.kolya.gym.service;
 
+import com.kolya.gym.data.ActionType;
 import com.kolya.gym.data.TrainerWorkloadRequestData;
 import com.kolya.gym.db.TrainerWorkload;
 import com.kolya.gym.domain.Trainer;
@@ -21,7 +22,18 @@ public class TrainerWorkloadService {
     @Autowired
     private TrainerWorkloadRepo trainerWorkloadRepo;
 
-    public void addTraining(UUID transactionId, TrainerWorkloadRequestData requestData){
+    public void changeWorkload(UUID transactionId, TrainerWorkloadRequestData trainerWorkloadData) {
+        switch(trainerWorkloadData.getActionType()){
+            case ADD:
+                addTraining(transactionId, trainerWorkloadData);
+                break;
+            case DELETE:
+                deleteTraining(transactionId, trainerWorkloadData);
+                break;
+        }
+    }
+
+    private void addTraining(UUID transactionId, TrainerWorkloadRequestData requestData){
         logger.info("Transaction ID: {}, Adding training {}", transactionId, requestData);
         Trainer trainer = getTrainerFromRequestData(requestData);
         Training training = getTrainingFromRequestData(requestData);
@@ -29,7 +41,7 @@ public class TrainerWorkloadService {
         logger.info("Transaction ID: {}, Training was added. Trainer:{}, Training: {}", transactionId, trainer, training);
     }
 
-    public void deleteTraining(UUID transactionId, TrainerWorkloadRequestData requestData){
+    private void deleteTraining(UUID transactionId, TrainerWorkloadRequestData requestData){
         logger.info("Transaction ID: {}, Deleting training {}", transactionId, requestData);
         Trainer trainer = getTrainerFromRequestData(requestData);
         Training training = getTrainingFromRequestData(requestData);
@@ -68,6 +80,8 @@ public class TrainerWorkloadService {
         if (requestData.getTrainingDuration()==null) throw new IllegalArgumentException("Training Duration can't be empty");
         if (requestData.getTrainingDuration()<0) throw new IllegalArgumentException("Training Duration can't be negative");
         if (requestData.isActive()==null) throw new IllegalArgumentException("Active Status can't be null");
+        if (requestData.getActionType()==null) throw new IllegalArgumentException("ActionType can't be null");
     }
+
 
 }
