@@ -1,5 +1,6 @@
 package com.kolya.gym.service;
 
+import com.kolya.gym.data.ActionType;
 import com.kolya.gym.data.TrainerWorkloadRequestData;
 import com.kolya.gym.repo.TrainerWorkloadRepo;
 import org.junit.Before;
@@ -36,15 +37,18 @@ public class TrainerWorkloadServiceTest {
         requestData.setTrainingDuration(2);
     }
 
+
     @Test
-    public void addTrainingTest() {
-        trainerWorkloadService.addTraining(UUID.randomUUID(), requestData);
+    public void changeWorkloadAddTraining() {
+        requestData.setActionType(ActionType.ADD);
+        trainerWorkloadService.changeWorkload(UUID.randomUUID(), requestData);
         verify(trainerWorkloadRepo, times(1)).addTraining(any(), any());
     }
 
     @Test
-    public void deleteTrainingTest() {
-        trainerWorkloadService.deleteTraining(UUID.randomUUID(), requestData);
+    public void changeWorkloadDeleteTraining() {
+        requestData.setActionType(ActionType.DELETE);
+        trainerWorkloadService.changeWorkload(UUID.randomUUID(), requestData);
         verify(trainerWorkloadRepo, times(1)).deleteTraining(any(), any());
     }
 

@@ -23,18 +23,16 @@ public class Reciever {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    @Value("${mq.queue.name.add}")
-    private String QUEUE_NAME_ADD;
+    @Value("${mq.queue.name.workload}")
+    private String QUEUE_NAME_WORKLOAD;
 
-    @Value("${mq.queue.name.delete}")
-    private String QUEUE_NAME_DELETE;
     @Value("${mq.queue.name.dlq}")
     private String QUEUE_NAME_DLQ;
 
-    @JmsListener(destination = "${mq.queue.name.add}")
-    public void recieveAdd(TrainerWorkloadRequestData trainerWorkloadData){
+    @JmsListener(destination = "${mq.queue.name.workload}")
+    public void recieveWorkloadRequest(TrainerWorkloadRequestData trainerWorkloadData){
         UUID transactionId = UUID.randomUUID();
-        logger.info("Transaction ID: {}, Message recieved. Queue: {}, Message: {}", transactionId, QUEUE_NAME_ADD, trainerWorkloadData);
+        logger.info("Transaction ID: {}, Message recieved. Queue: {}, Message: {}", transactionId, QUEUE_NAME_WORKLOAD, trainerWorkloadData);
         try{
             trainerWorkloadService.validateRequestData(trainerWorkloadData);
         }catch (IllegalArgumentException e){
@@ -43,25 +41,10 @@ public class Reciever {
             logger.info("Transaction ID: {}, TrainerWorkloadRequestData is invalid. Message redirected to dlq.", transactionId);
             return ;
         }
-        trainerWorkloadService.addTraining(transactionId, trainerWorkloadData);
-        logger.info("Transaction ID: {}, Training added after recieving.", transactionId);
+        trainerWorkloadService.changeWorkload(transactionId, trainerWorkloadData);
+        logger.info("Transaction ID: {}, Workload updated after recieving.", transactionId);
     }
 
-    @JmsListener(destination = "${mq.queue.name.delete}")
-    public void recieveDelete(TrainerWorkloadRequestData trainerWorkloadData){
-        UUID transactionId = UUID.randomUUID();
-        logger.info("Transaction ID: {}, Message recieved. Queue: {}, Message: {}", transactionId, QUEUE_NAME_DELETE, trainerWorkloadData);
-        try{
-            trainerWorkloadService.validateRequestData(trainerWorkloadData);
-        }catch (IllegalArgumentException e){
-            jmsTemplate.convertAndSend(QUEUE_NAME_DLQ, trainerWorkloadData,
-                    message ->  setPropertyForMessage(message,"dlqDeliveryFailureCause",e.getMessage()));
-            logger.info("Transaction ID: {}, TrainerWorkloadRequestData is invalid. Message redirected to dlq.", transactionId);
-            return ;
-        }
-        trainerWorkloadService.deleteTraining(transactionId, trainerWorkloadData);
-        logger.info("Transaction ID: {}, Training deleted after recieving.", transactionId);
-    }
 
     private Message setPropertyForMessage(Message message, String propertyName, String value) throws JMSException {
         message.setStringProperty(propertyName,value);
