@@ -2,6 +2,11 @@ spring:
   profiles: dev
   application:
     name: TRAINER-WORKLOAD-SERVICE
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: workload
 server:
   port: 8081
 auth:

@@ -50,6 +50,12 @@
       <artifactId>spring-boot-starter-activemq</artifactId>
     </dependency>
 
+    <!-- Other dependencies -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-mongodb</artifactId>
+    </dependency>
+
     <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-broker -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
@@ -167,7 +173,6 @@
               <exclude>com/kolya/gym/data/*</exclude>
               <exclude>com/kolya/gym/domain/*</exclude>
               <exclude>com/kolya/gym/exception/*</exclude>
-              <exclude>com/kolya/gym/db/TrainerWorkload.class</exclude>
               <exclude>**/Main.class</exclude>
             </excludes>
           </configuration>

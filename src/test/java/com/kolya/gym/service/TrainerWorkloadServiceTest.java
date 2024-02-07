@@ -42,20 +42,20 @@ public class TrainerWorkloadServiceTest {
     public void changeWorkloadAddTraining() {
         requestData.setActionType(ActionType.ADD);
         trainerWorkloadService.changeWorkload(UUID.randomUUID(), requestData);
-        verify(trainerWorkloadRepo, times(1)).addTraining(any(), any());
+        verify(trainerWorkloadRepo, times(1)).findById(any());
     }
 
     @Test
     public void changeWorkloadDeleteTraining() {
         requestData.setActionType(ActionType.DELETE);
         trainerWorkloadService.changeWorkload(UUID.randomUUID(), requestData);
-        verify(trainerWorkloadRepo, times(1)).deleteTraining(any(), any());
+        verify(trainerWorkloadRepo, times(1)).findById(any());
     }
 
     @Test
     public void getByUsernameTest() {
         trainerWorkloadService.getByUsername(UUID.randomUUID(), "username");
-        verify(trainerWorkloadRepo, times(1)).getTrainingByUsername("username");
+        verify(trainerWorkloadRepo, times(1)).findByUsername("username");
     }
 
     @Test(expected = IllegalArgumentException.class)

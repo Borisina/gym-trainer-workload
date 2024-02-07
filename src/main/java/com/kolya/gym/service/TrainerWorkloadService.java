@@ -1,9 +1,9 @@
 package com.kolya.gym.service;
 
-import com.kolya.gym.data.ActionType;
 import com.kolya.gym.data.TrainerWorkloadRequestData;
-import com.kolya.gym.db.TrainerWorkload;
+import com.kolya.gym.domain.Month;
 import com.kolya.gym.domain.Trainer;
+import com.kolya.gym.domain.TrainerWorkload;
 import com.kolya.gym.domain.Training;
 import com.kolya.gym.repo.TrainerWorkloadRepo;
 import org.apache.logging.log4j.util.Strings;
@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -37,7 +39,7 @@ public class TrainerWorkloadService {
         logger.info("Transaction ID: {}, Adding training {}", transactionId, requestData);
         Trainer trainer = getTrainerFromRequestData(requestData);
         Training training = getTrainingFromRequestData(requestData);
-        trainerWorkloadRepo.addTraining(trainer, training);
+        addTrainingToMongo(trainer, training);
         logger.info("Transaction ID: {}, Training was added. Trainer:{}, Training: {}", transactionId, trainer, training);
     }
 
@@ -45,13 +47,13 @@ public class TrainerWorkloadService {
         logger.info("Transaction ID: {}, Deleting training {}", transactionId, requestData);
         Trainer trainer = getTrainerFromRequestData(requestData);
         Training training = getTrainingFromRequestData(requestData);
-        trainerWorkloadRepo.deleteTraining(trainer, training);
+        deleteTrainingFromMongo(trainer, training);
         logger.info("Transaction ID: {}, Training was deleted. Trainer:{}, Training: {}", transactionId, trainer, training);
     }
 
     public TrainerWorkload getByUsername(UUID transactionId, String username){
         logger.info("Transaction ID: {}, Getting trainer's workload by trainer's username = {}", transactionId, username);
-        TrainerWorkload trainerWorkload = trainerWorkloadRepo.getTrainingByUsername(username);
+        TrainerWorkload trainerWorkload = trainerWorkloadRepo.findByUsername(username);
         logger.info("Transaction ID: {}, Trainer's workload returned: {}", transactionId, trainerWorkload);
         return trainerWorkload;
     }
@@ -81,6 +83,55 @@ public class TrainerWorkloadService {
         if (requestData.getTrainingDuration()<0) throw new IllegalArgumentException("Training Duration can't be negative");
         if (requestData.isActive()==null) throw new IllegalArgumentException("Active Status can't be null");
         if (requestData.getActionType()==null) throw new IllegalArgumentException("ActionType can't be null");
+    }
+
+    private void addTrainingToMongo(Trainer trainer, Training training){
+        updateTrainingFromMongo(trainer, training, true);
+    }
+
+    private void deleteTrainingFromMongo(Trainer trainer, Training training){
+        updateTrainingFromMongo(trainer, training, false);
+    }
+
+    private void updateTrainingFromMongo(Trainer trainer, Training training, boolean isAdd){
+        TrainerWorkload trainerWorkload = trainerWorkloadRepo.findById(trainer.getUsername())
+                .orElse(new TrainerWorkload(trainer));
+        trainerWorkload.setActive(trainer.isActive());
+        Map<Integer, Map<Month, Integer>> workload =  trainerWorkload.getWorkload();
+        Month month = Month.values()[training.getDate().getMonth()];
+        int year = training.getDate().getYear()+1900;
+        Map<Month, Integer> monthDurationMap = workload.computeIfAbsent(year, k -> new HashMap<>());
+        int oldDuration = monthDurationMap.getOrDefault(month,0);
+        int updatedDuration = 0;
+        if (isAdd){
+            updatedDuration = oldDuration + training.getDuration();
+            monthDurationMap.put(month,updatedDuration);
+        }else{
+            updatedDuration = oldDuration - training.getDuration();
+            putOrRemove(updatedDuration,workload,year,month);
+        }
+        if (workload.isEmpty()){
+            trainerWorkloadRepo.deleteById(trainer.getUsername());
+        }else{
+            trainerWorkloadRepo.save(trainerWorkload);
+        }
+    }
+
+    private void putOrRemove(int updatedDuration, Map<Integer, Map<Month, Integer>> workload, int year, Month month){
+        Map<Month, Integer> monthDurationMap = workload.get(year);
+        if (updatedDuration>0){
+            monthDurationMap.put(month,updatedDuration);
+        }else{
+            removeCascade(workload, year, month);
+        }
+    }
+
+    private void removeCascade(Map<Integer, Map<Month, Integer>> workload, int year, Month month){
+        Map<Month, Integer> monthDurationMap = workload.get(year);
+        monthDurationMap.remove(month);
+        if (monthDurationMap.isEmpty()){
+            workload.remove(year);
+        }
     }
 
 

@@ -1,8 +1,7 @@
 package com.kolya.gym.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kolya.gym.data.TrainerWorkloadRequestData;
-import com.kolya.gym.db.TrainerWorkload;
+import com.kolya.gym.domain.TrainerWorkload;
 import com.kolya.gym.service.TrainerWorkloadService;
 import org.junit.Before;
 import org.junit.Test;
