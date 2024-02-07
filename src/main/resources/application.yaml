@@ -4,6 +4,7 @@ spring:
     name: TRAINER-WORKLOAD-SERVICE
   data:
     mongodb:
+      auto-index-creation: true
       host: localhost
       port: 27017
       database: workload
@@ -41,6 +42,12 @@ spring:
   profiles: test
   application:
     name: TRAINER-WORKLOAD-SERVICE
+  data:
+    mongodb:
+      auto-index-creation: true
+      host: localhost
+      port: 27017
+      database: workload
 server:
   port: 8091
 auth:
@@ -75,6 +82,12 @@ spring:
   profiles: prod
   application:
     name: TRAINER-WORKLOAD-SERVICE
+  data:
+    mongodb:
+      auto-index-creation: true
+      host: localhost
+      port: 27017
+      database: workload
 server:
   port: 8083
 auth:
