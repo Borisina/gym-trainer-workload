@@ -86,17 +86,17 @@ public class TrainerWorkloadService {
     }
 
     private void addTrainingToMongo(Trainer trainer, Training training){
-        updateTrainingFromMongo(trainer, training, true);
+        updateWorkloadFromMongo(trainer, training, true);
     }
 
     private void deleteTrainingFromMongo(Trainer trainer, Training training){
-        updateTrainingFromMongo(trainer, training, false);
+        updateWorkloadFromMongo(trainer, training, false);
     }
 
-    private void updateTrainingFromMongo(Trainer trainer, Training training, boolean isAdd){
+    private void updateWorkloadFromMongo(Trainer trainer, Training training, boolean isAdd){
         TrainerWorkload trainerWorkload = trainerWorkloadRepo.findById(trainer.getUsername())
                 .orElse(new TrainerWorkload(trainer));
-        trainerWorkload.setActive(trainer.isActive());
+        updateTrainer(trainerWorkload,trainer);
         Map<Integer, Map<Month, Integer>> workload =  trainerWorkload.getWorkload();
         Month month = Month.values()[training.getDate().getMonth()];
         int year = training.getDate().getYear()+1900;
@@ -117,6 +117,12 @@ public class TrainerWorkloadService {
         }
     }
 
+    private void updateTrainer(TrainerWorkload trainerWorkload, Trainer trainer){
+        trainerWorkload.setFirstName(trainer.getFirstName());
+        trainerWorkload.setLastName(trainer.getLastName());
+        trainerWorkload.setActive(trainer.isActive());
+    }
+
     private void putOrRemove(int updatedDuration, Map<Integer, Map<Month, Integer>> workload, int year, Month month){
         Map<Month, Integer> monthDurationMap = workload.get(year);
         if (updatedDuration>0){
@@ -133,6 +139,4 @@ public class TrainerWorkloadService {
             workload.remove(year);
         }
     }
-
-
 }
