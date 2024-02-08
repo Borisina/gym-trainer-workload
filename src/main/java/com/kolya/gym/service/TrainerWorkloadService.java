@@ -1,6 +1,7 @@
 package com.kolya.gym.service;
 
 import com.kolya.gym.data.TrainerWorkloadRequestData;
+import com.kolya.gym.data.YearMonth;
 import com.kolya.gym.domain.Month;
 import com.kolya.gym.domain.Trainer;
 import com.kolya.gym.domain.TrainerWorkload;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -86,35 +88,48 @@ public class TrainerWorkloadService {
     }
 
     private void addTrainingToMongo(Trainer trainer, Training training){
-        updateWorkloadFromMongo(trainer, training, true);
+        TrainerWorkload trainerWorkload = getWorkload(trainer,training);
+        Map<Integer,Map<Month,Integer>> workload = trainerWorkload.getWorkload();
+        YearMonth yearMonth = getYearAndMonthFromDate(training.getDate());
+        Map<Month,Integer> monthDurationMap = workload.get(yearMonth.getYear());
+        int oldDuration = monthDurationMap.getOrDefault(yearMonth.getMonth(),0);
+
+        int updatedDuration = oldDuration + training.getDuration();
+        monthDurationMap.put(yearMonth.getMonth(),updatedDuration);
+        trainerWorkloadRepo.save(trainerWorkload);
     }
 
     private void deleteTrainingFromMongo(Trainer trainer, Training training){
-        updateWorkloadFromMongo(trainer, training, false);
-    }
+        TrainerWorkload trainerWorkload = getWorkload(trainer,training);
+        Map<Integer,Map<Month,Integer>> workload = trainerWorkload.getWorkload();
+        YearMonth yearMonth = getYearAndMonthFromDate(training.getDate());
+        Map<Month,Integer> monthDurationMap = workload.get(yearMonth.getYear());
+        int oldDuration = monthDurationMap.getOrDefault(yearMonth.getMonth(),0);
 
-    private void updateWorkloadFromMongo(Trainer trainer, Training training, boolean isAdd){
-        TrainerWorkload trainerWorkload = trainerWorkloadRepo.findById(trainer.getUsername())
-                .orElse(new TrainerWorkload(trainer));
-        updateTrainer(trainerWorkload,trainer);
-        Map<Integer, Map<Month, Integer>> workload =  trainerWorkload.getWorkload();
-        Month month = Month.values()[training.getDate().getMonth()];
-        int year = training.getDate().getYear()+1900;
-        Map<Month, Integer> monthDurationMap = workload.computeIfAbsent(year, k -> new HashMap<>());
-        int oldDuration = monthDurationMap.getOrDefault(month,0);
-        int updatedDuration = 0;
-        if (isAdd){
-            updatedDuration = oldDuration + training.getDuration();
-            monthDurationMap.put(month,updatedDuration);
-        }else{
-            updatedDuration = oldDuration - training.getDuration();
-            putOrRemove(updatedDuration,workload,year,month);
-        }
+        int updatedDuration = oldDuration - training.getDuration();
+        putOrRemove(updatedDuration,workload,yearMonth.getYear(),yearMonth.getMonth());
         if (workload.isEmpty()){
             trainerWorkloadRepo.deleteById(trainer.getUsername());
         }else{
             trainerWorkloadRepo.save(trainerWorkload);
         }
+    }
+
+    private TrainerWorkload getWorkload(Trainer trainer, Training training){
+        TrainerWorkload trainerWorkload = trainerWorkloadRepo.findById(trainer.getUsername())
+                .orElse(new TrainerWorkload(trainer));
+        updateTrainer(trainerWorkload,trainer);
+        Map<Integer, Map<Month, Integer>> workload =  trainerWorkload.getWorkload();
+        YearMonth yearMonth = getYearAndMonthFromDate(training.getDate());
+        workload.putIfAbsent(yearMonth.getYear(), new HashMap<>());
+        return trainerWorkload;
+    }
+
+    private YearMonth getYearAndMonthFromDate(Date date){
+        int STARTING_POINT_FOR_YEARS = 1900;
+        int year = date.getYear() + STARTING_POINT_FOR_YEARS;
+        Month month = Month.values()[date.getMonth()];
+        return new YearMonth(year,month);
     }
 
     private void updateTrainer(TrainerWorkload trainerWorkload, Trainer trainer){
