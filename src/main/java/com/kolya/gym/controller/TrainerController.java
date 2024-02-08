@@ -1,6 +1,6 @@
 package com.kolya.gym.controller;
 
-import com.kolya.gym.db.TrainerWorkload;
+import com.kolya.gym.domain.TrainerWorkload;
 import com.kolya.gym.service.TrainerWorkloadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
