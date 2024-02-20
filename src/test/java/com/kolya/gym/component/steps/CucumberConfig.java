@@ -17,4 +17,5 @@ public class CucumberConfig {
 
     @MockBean
     private JmsTemplate jmsTemplate;
+
 }

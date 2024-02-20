@@ -95,6 +95,9 @@ auth:
 secret-key: 'mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890'
 audience-type: 'service'
 mq:
+  password: admin
+  username: admin
+  url: 'tcp://localhost:8199'
   converter:
     type-id-property-name: '_type'
   factory:
