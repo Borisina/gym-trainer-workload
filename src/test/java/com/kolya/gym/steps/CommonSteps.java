@@ -40,6 +40,8 @@ public class CommonSteps {
     @Autowired
     private TrainerWorkloadRepo trainerWorkloadRepo;
 
+    private int WAIT_TIME = 500;
+
     @Given("a trainerWorkloadRequestData with trainerUsername {string}, trainingDate {string}, duration {int} and actionStatus {string}")
     public void a_trainer_workload_request_data(String trainerUsername, String trainingDateStr, int duration, String actionStatus) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
@@ -75,6 +77,7 @@ public class CommonSteps {
     @When("^the trainerWorkloadRequestData is pushed to the mq$")
     public void the_data_is_pushed_to_the_mq() throws InterruptedException {
         jmsTemplate.convertAndSend(QUEUE_NAME_WORKLOAD, scenarioContext.getData());
+        Thread.sleep(WAIT_TIME);
     }
 
     @Then("^the trainerWorkloadRequestData should be pushed to the DLQ$")

@@ -50,8 +50,9 @@ public class CucumberConfig {
 
     @Autowired
     public void setJmsTemplate(JmsTemplate jmsTemplate){
-        int RECEIVE_TIMEOUT = 500;
-        jmsTemplate.setReceiveTimeout(RECEIVE_TIMEOUT);
+        int receiveTimeout = 500;
+        jmsTemplate.setReceiveTimeout(receiveTimeout);
         this.jmsTemplate = jmsTemplate;
     }
+
 }

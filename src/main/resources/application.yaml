@@ -52,9 +52,6 @@ spring:
       password: admin
       database: workload
       authentication-database: admin
-
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
   port: 8091
 auth:
   bearer:
@@ -83,4 +80,35 @@ eureka:
   instance:
     hostname: localhost
 
+---
 
+spring:
+  profiles: c-test
+  port: 8092
+  application:
+    name: TRAINER-WORKLOAD-SERVICE
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+auth:
+  bearer:
+    token: 'myBearerToken2'
+secret-key: 'mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890'
+audience-type: 'service'
+mq:
+  converter:
+    type-id-property-name: '_type'
+  factory:
+    concurrency: '1-1'
+  queue:
+    name:
+      workload: 'trainer-workload-queue'
+      dlq: 'ActiveMQ.DLQ'
+eureka:
+  client:
+    enabled: false
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    hostname: localhost
