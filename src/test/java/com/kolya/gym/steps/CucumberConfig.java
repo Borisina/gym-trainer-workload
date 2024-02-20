@@ -23,6 +23,9 @@ public class CucumberConfig {
     @Value("${mq.queue.name.workload}")
     private String QUEUE_NAME_WORKLOAD;
 
+    @Value("${mq.queue.name.dlq}")
+    private String QUEUE_NAME_DLQ;
+
     @Before
     @After
     public void deleteTrainers(){
@@ -32,12 +35,13 @@ public class CucumberConfig {
     @After("@queueTest")
     @Before("@queueTest")
     public void before(){
-        clearQueue();
+        clearQueue(QUEUE_NAME_WORKLOAD);
+        clearQueue(QUEUE_NAME_DLQ);
     }
 
-    private void clearQueue() {
+    private void clearQueue(String queueName) {
         while (true) {
-            Object message = jmsTemplate.receive(QUEUE_NAME_WORKLOAD);
+            Object message = jmsTemplate.receive(queueName);
             if (message == null) {
                 break;
             }

@@ -52,7 +52,9 @@ spring:
       password: admin
       database: workload
       authentication-database: admin
-server:
+
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
   port: 8091
 auth:
   bearer:
@@ -80,3 +82,5 @@ eureka:
     fetch-registry: true
   instance:
     hostname: localhost
+
+

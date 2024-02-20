@@ -7,6 +7,7 @@ import com.kolya.gym.domain.TrainerWorkload;
 import com.kolya.gym.repo.TrainerWorkloadRepo;
 import com.netflix.discovery.converters.Auto;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class CommonSteps {
 
     @Autowired
@@ -30,10 +34,13 @@ public class CommonSteps {
     @Value("${mq.queue.name.workload}")
     private String QUEUE_NAME_WORKLOAD;
 
+    @Value("${mq.queue.name.dlq}")
+    private String QUEUE_NAME_DLQ;
+
     @Autowired
     private TrainerWorkloadRepo trainerWorkloadRepo;
 
-    @Given("^a trainerWorkloadRequestData with trainerUsername \"([^\"]*)\", trainingDate \"([^\"]*)\", duration ([0-9]*) and actionStatus \"([^\"]*)\"$")
+    @Given("a trainerWorkloadRequestData with trainerUsername {string}, trainingDate {string}, duration {int} and actionStatus {string}")
     public void a_trainer_workload_request_data(String trainerUsername, String trainingDateStr, int duration, String actionStatus) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         Date date = formatter.parse(trainingDateStr);
@@ -48,7 +55,7 @@ public class CommonSteps {
         scenarioContext.setData(data);
     }
 
-    @Given("^a trainer workload \\(username \"([^\"]*)\", year ([0-9]*), month \"([^\"]*)\", duration ([0-9]*)\\), that is already saved in the mongo db$")
+    @Given("a trainer workload \\(username {string}, year {int}, month {string}, duration {int}\\), that is already saved in the mongo db")
     public void a_trainer_workload_in_the_mongo_db(String username, int year, String month, int duration) throws InterruptedException {
         TrainerWorkload trainerWorkload = new TrainerWorkload();
         trainerWorkload.setActive(true);
@@ -62,13 +69,24 @@ public class CommonSteps {
         trainerWorkload.setWorkload(workload);
         trainerWorkloadRepo.save(trainerWorkload);
         scenarioContext.setTrainerWorkload(trainerWorkload);
-        Thread.sleep(500);
     }
 
 
     @When("^the trainerWorkloadRequestData is pushed to the mq$")
     public void the_data_is_pushed_to_the_mq() throws InterruptedException {
         jmsTemplate.convertAndSend(QUEUE_NAME_WORKLOAD, scenarioContext.getData());
-        Thread.sleep(500);
+    }
+
+    @Then("^the trainerWorkloadRequestData should be pushed to the DLQ$")
+    public void the_trainerWorkloadRequestData_should_pusged_to_the_DLQ$() throws InterruptedException {
+        Object message = jmsTemplate.receiveAndConvert(QUEUE_NAME_DLQ);
+        TrainerWorkloadRequestData trainerWorkloadRequestData= null;
+        if (message instanceof TrainerWorkloadRequestData){
+            trainerWorkloadRequestData = (TrainerWorkloadRequestData) message;
+        }
+        assertNotNull(trainerWorkloadRequestData);
+        assertEquals(scenarioContext.getData().getUsername(), trainerWorkloadRequestData.getUsername());
+        assertEquals(scenarioContext.getData().getFirstName(), trainerWorkloadRequestData.getFirstName());
+        assertEquals(scenarioContext.getData().getUsername(), trainerWorkloadRequestData.getUsername());
     }
 }

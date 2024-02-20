@@ -1,9 +1,6 @@
 package com.kolya.gym.service;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,7 +48,7 @@ public class JwtService {
         try{
             String audience = extractAudience(token);
             return (audience!=null && audience.equals(AUDIENCE_TYPE) && !isTokenExpired(token));
-        }catch (SignatureException e){
+        }catch (SignatureException| MalformedJwtException e){
             return false;
         }
     }

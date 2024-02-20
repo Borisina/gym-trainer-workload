@@ -5,6 +5,7 @@ import com.kolya.gym.repo.TrainerWorkloadRepo;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.jms.core.JmsTemplate;
 
 @CucumberContextConfiguration

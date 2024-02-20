@@ -38,7 +38,7 @@ public class CommonSteps {
     @Autowired
     private Reciever reciever;
 
-    @Given("^a trainerWorkloadRequestData with trainerUsername \"([^\"]*)\", trainingDate \"([^\"]*)\", duration ([0-9]*) and actionStatus \"([^\"]*)\"$")
+    @Given("^a trainerWorkloadRequestData with trainerUsername \"([^\"]*)\", trainingDate \"([^\"]*)\", duration (.?[0-9]*) and actionStatus \"([^\"]*)\"$")
     public void a_trainer_workload_request_data(String trainerUsername, String trainingDateStr, int duration, String actionStatus) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         Date date = formatter.parse(trainingDateStr);

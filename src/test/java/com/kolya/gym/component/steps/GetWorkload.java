@@ -36,13 +36,17 @@ public class GetWorkload {
         jwt = jwtService.generateTokenForServices();
     }
 
-    @When("^get request to get workload by trainer's username occurs$")
+    @Given("^no jwt for access$")
+    public void no_jwt(){
+    }
+
+    @When("^the request to get workload by trainer's username occurs$")
     public void get_request() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(jwt);
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        response = restTemplate.exchange("/trainer-workload/"+scenarioContext.getData().getUsername(), HttpMethod.GET, entity, String.class);
+        response = restTemplate.exchange("/trainer-workload/"+scenarioContext.getTrainerWorkload().getUsername(), HttpMethod.GET, entity, String.class);
     }
 
     @Then("^the response should have json trainer workload info$")
@@ -52,5 +56,10 @@ public class GetWorkload {
         assertNotNull(trainerWorkloadFromMongo);
         assertEquals(scenarioContext.getTrainerWorkload().getUsername(), trainerWorkloadFromMongo.getUsername());
         assertEquals(scenarioContext.getTrainerWorkload().getWorkload(),trainerWorkloadFromMongo.getWorkload());
+    }
+
+    @Then("^response status should be ([0-9]*)$")
+    public void response_status_should_be(int status) {
+        assertEquals(status, response.getStatusCodeValue());
     }
 }

@@ -13,7 +13,6 @@ public class DeleteWorkload {
     @Autowired
     private ScenarioComponentContext scenarioContext;
 
-
     @Then("^the trainer workload should be deleted from the mongo db$")
     public void the_training_should_be_deleted_from_the_database() throws InterruptedException {
         verify(trainerWorkloadRepo,times(1)).deleteById(scenarioContext.getData().getUsername());
