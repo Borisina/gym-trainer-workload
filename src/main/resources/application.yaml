@@ -47,8 +47,11 @@ spring:
     mongodb:
       auto-index-creation: true
       host: localhost
-      port: 27017
+      port: 27019
+      username: admin
+      password: admin
       database: workload
+      authentication-database: admin
 server:
   port: 8091
 auth:
@@ -59,7 +62,7 @@ audience-type: 'service'
 mq:
   password: 'admin'
   username: 'admin'
-  url: 'tcp://localhost:61616'
+  url: 'tcp://localhost:8199'
   converter:
     type-id-property-name: '_type'
   factory:
@@ -70,46 +73,7 @@ mq:
       dlq: 'ActiveMQ.DLQ'
 eureka:
   client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka
-    register-with-eureka: true
-    fetch-registry: true
-  instance:
-    hostname: localhost
-
----
-
-spring:
-  profiles: prod
-  application:
-    name: TRAINER-WORKLOAD-SERVICE
-  data:
-    mongodb:
-      auto-index-creation: true
-      host: localhost
-      port: 27017
-      database: workload
-server:
-  port: 8083
-auth:
-  bearer:
-    token: 'myBearerToken2'
-secret-key: 'mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890'
-audience-type: 'service'
-mq:
-  password: 'admin'
-  username: 'admin'
-  url: 'tcp://localhost:61616'
-  converter:
-    type-id-property-name: '_type'
-  factory:
-    concurrency: '1-1'
-  queue:
-    name:
-      workload: 'trainer-workload-queue'
-      dlq: 'ActiveMQ.DLQ'
-eureka:
-  client:
+    enabled: false
     serviceUrl:
       defaultZone: http://localhost:8761/eureka
     register-with-eureka: true

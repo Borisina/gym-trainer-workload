@@ -1,9 +1,9 @@
 package com.kolya.gym.service;
 
-import com.kolya.gym.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.security.SignatureException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
@@ -51,5 +54,17 @@ public class JwtService {
         }catch (SignatureException e){
             return false;
         }
+    }
+
+    public String generateTokenForServices() {
+        Map<String, Object> claims = new HashMap<>();
+        String token = createTokenForServices(claims);
+        return token;
+    }
+
+    private String createTokenForServices(Map<String, Object> claims) {
+        return Jwts.builder().setClaims(claims).setAudience("service").setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
     }
 }
