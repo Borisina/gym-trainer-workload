@@ -2,9 +2,11 @@ package com.kolya.gym.steps;
 
 import com.kolya.gym.data.TrainerWorkloadRequestData;
 import com.kolya.gym.domain.TrainerWorkload;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
+@Scope("cucumber-glue")
 public class ScenarioContext {
 
     private TrainerWorkloadRequestData data;
